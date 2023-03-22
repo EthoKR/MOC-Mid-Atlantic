@@ -1,0 +1,12 @@
+Constant	"ETI_DICT_ID"
+{
+	Value	"3280"
+}
+Constant	"ETI_ETHOSERIES_DICT_ID"
+{
+	Value	"1006"
+}
+Constant	"ETI_PRODUCT_NAME"
+{
+	Value	"EthoTech Custom"
+}

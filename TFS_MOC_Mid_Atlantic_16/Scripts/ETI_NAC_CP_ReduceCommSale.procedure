@@ -1,0 +1,51 @@
+Procedure	"ETI_NAC_CP_ReduceCommSale"
+{
+	Core	"Sales"
+	Documentation	""
+	Script	"sproc returns long SQLErrorState;
+
+in		'SOP Number'			SopNum;
+in		integer					SopType;
+in		'Line Item Sequence'	SopLineSeq;
+in		'Salesperson ID'		SpID;
+in		integer					SpFrom;
+in		integer					SpSplit;
+in		string					SpPlan;	
+in		'Item Number'			ItemNum;
+in		string					ItemPlan;	
+in		string					CustID;
+in		string					CustPlan;	
+out		currency				CommSaleReductionAmt;
+
+local	long					returnCode;
+local	currency				redAmt;
+
+clear CommSaleReductionAmt, returnCode, redAmt;
+
+call sproc \"ETI_NAC_CP_ReduceCommSale\",
+				returnCode,
+				SopNum,
+				SopType,
+				SopLineSeq,
+				SpID,
+				SpFrom,
+				SpSplit,
+				SpPlan,
+				ItemNum,
+				ItemPlan,
+				CustID,
+				CustPlan,
+				redAmt;
+	
+SQLErrorState = returnCode;
+
+if returnCode = 0 and redAmt <> 0 then
+	CommSaleReductionAmt = redAmt;
+end if;"
+	ServiceAction	""
+	ServiceCustomAciton	""
+	ServiceEnabled	"FALSE"
+	ServiceRawRequest	"FALSE"
+	ServiceUriTemplate	""
+	UserProperties	""
+}

@@ -1,0 +1,16 @@
+= SystemVariableList	"Globals"
+{
+	SystemVariables
+	{
+		SystemVariable	"ETI_TablesInitialized"		
+		{
+			Field	"ETI_TablesInitialized"
+			Position	"00360"
+		}
+		SystemVariable	"ETI_TriggerList"		
+		{
+			Field	"ETI_TriggerList"
+			Position	"00361"
+		}
+	}
+}

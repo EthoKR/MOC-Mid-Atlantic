@@ -1,0 +1,14 @@
+Field	"ETI_TablesInitialized"
+{
+	ArraySize	"0"
+	Datatype	"Boolean"
+	LookupForm	""
+	PhysicalName	"ETI_TablesInitialized"
+}
+Field	"ETI_TriggerList"
+{
+	ArraySize	"10"
+	Datatype	"ETI_INT5"
+	LookupForm	""
+	PhysicalName	"ETI_TriggerList"
+}

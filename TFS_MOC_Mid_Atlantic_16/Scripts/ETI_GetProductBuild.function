@@ -1,0 +1,46 @@
+Function	"ETI_GetProductBuild"
+{
+	Core	"System"
+	Documentation	""
+	Script	"function returns string	Version;
+
+in		integer		IN_DICT_ID;
+in		integer		IN_GP_Module_Num;
+
+local	integer		l_version_maj, l_version_min, l_build;
+local	string		l_padstr1, l_padstr2, l_padstr3;
+
+pragma(disable warning LiteralStringUsed);
+
+if ETI_IsProductLoaded(IN_DICT_ID) then
+	l_version_maj = Runtime_GetModuleInfo(IN_DICT_ID, IN_GP_Module_Num, l_version_min, l_build);
+	
+	if l_version_maj < 10 then
+		l_padstr1 = \"0\";
+	else
+		l_padstr1 = \"\";
+	end if;	
+
+	if l_version_min < 10 then
+		l_padstr2 = \"0\";
+	else
+		l_padstr2 = \"\";
+	end if;
+	
+	if l_build < 10 then
+		l_padstr3 = \"00\";
+	elseif l_build < 100 then
+		l_padstr3 = \"0\";
+	else
+		l_padstr3 = \"\";
+	end if;
+
+	Version = l_padstr1 + str(l_version_maj) + \".\" + l_padstr2 + str(l_version_min) + \".\" + l_padstr3 + str(l_build);
+
+else
+	Version = \"00.00.000\";
+end if;
+
+pragma(enable warning LiteralStringUsed);"
+	UserProperties	""
+}

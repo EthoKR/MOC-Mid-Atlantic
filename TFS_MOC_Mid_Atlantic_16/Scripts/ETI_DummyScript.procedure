@@ -1,0 +1,12 @@
+Procedure	"ETI_DummyScript"
+{
+	Core	"System"
+	Documentation	""
+	Script	"{}"
+	ServiceAction	""
+	ServiceCustomAciton	""
+	ServiceEnabled	"FALSE"
+	ServiceRawRequest	"FALSE"
+	ServiceUriTemplate	""
+	UserProperties	""
+}

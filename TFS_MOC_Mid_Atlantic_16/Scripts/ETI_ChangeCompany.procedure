@@ -1,0 +1,59 @@
+Procedure	"ETI_ChangeCompany"
+{
+	Core	"System"
+	Documentation	""
+	Script	"local	boolean		tablesCreated;
+local	integer		i, triggerCount = 1;	
+
+
+ETI_TablesInitialized of globals = true;
+
+{
+if 'SQL Server' of globals > 0 then
+	call ETI_CreateTables, ETI_TablesInitialized of globals, tablesCreated;
+else
+	ETI_TablesInitialized of globals = true;
+end if;
+}
+
+if ETI_TablesInitialized of globals then
+	{stub code to be used if table conversions are needed
+	-----------------------------------------------------
+		if tablesCreated then
+			call ETI_ConvertTables, ETI_TablesInitialized of globals;
+		end if;
+	-----------------------------------------------------}	
+	if ETI_TablesInitialized of globals then
+		{register all product triggers}
+		if ETI_IsProductLoaded(ETI_ETHOSERIES_DICT_ID) then
+			if Trigger_RegisterProcedureByName(
+									ETI_ETHOSERIES_DICT_ID,
+									\"ETI_Comm_Plan_Set_Update_Sale_Cost_Amounts\",
+									TRIGGER_AFTER_ORIGINAL,
+									script ETI_Comm_Plan_Set_Update_Sale_Cost_Amounts_After,
+									ETI_TriggerList[1] of globals) <> SY_NOERR then
+									
+				warning \"Error registering trigger ETI_Comm_Plan_Set_Update_Sale_Cost_Amounts_After\";
+			end if;
+		end if;
+	end if;
+end if;
+
+if not ETI_TablesInitialized of globals then
+ 	{unregister all product triggers}
+ 	for i = 1 to triggerCount do
+ 		if Trigger_Unregister(ETI_TriggerList[i] of globals) then end if;
+		clear ETI_TriggerList[i] of globals;
+	end for;
+end if;
+
+if isopen(form Progress_Control) then
+	close form Progress_Control;
+end if;	"
+	ServiceAction	""
+	ServiceCustomAciton	""
+	ServiceEnabled	"FALSE"
+	ServiceRawRequest	"FALSE"
+	ServiceUriTemplate	""
+	UserProperties	""
+}

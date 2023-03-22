@@ -1,0 +1,6 @@
+Datatype	"ETI_INT5"
+{
+	Control	"Integer"
+	Format	""
+	KeyableLength	"5"
+}

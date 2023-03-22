@@ -1,0 +1,29 @@
+Procedure	"Startup"
+{
+	Core	"System"
+	Documentation	""
+	Script	"{Change Company}
+if Trigger_RegisterFocus(
+			reference(window Main_Menu_1 of form Toolbar),
+			TRIGGER_FOCUS_PRE,
+			TRIGGER_AFTER_ORIGINAL,
+			script ETI_ChangeCompany) <> SY_NOERR then
+	
+	warning \"Error registering trigger ETI_ChangeCompany - \" + ETI_PRODUCT_NAME;
+end if;
+
+{Build Number}
+if Trigger_RegisterForm(
+				reference(form 'About Box'),
+				ETI_PRODUCT_NAME + \" \" + ETI_GetProductBuild(ETI_DICT_ID, 47),
+				\"\",
+				script ETI_DummyScript) <> SY_NOERR then
+	warning \"Error registering trigger MENU - About Dynamics GP - \" + ETI_PRODUCT_NAME;
+end if;"
+	ServiceAction	""
+	ServiceCustomAciton	""
+	ServiceEnabled	"FALSE"
+	ServiceRawRequest	"FALSE"
+	ServiceUriTemplate	""
+	UserProperties	""
+}

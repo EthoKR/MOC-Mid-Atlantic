@@ -1,0 +1,23 @@
+Function	"ETI_IsProductLoaded"
+{
+	Core	"System"
+	Documentation	""
+	Script	"function returns boolean IsLoaded;
+
+in		integer		ProductID;
+
+local	integer		Position;
+
+IsLoaded = false;
+
+if ProductID = 0 then
+	IsLoaded = true;
+	abort script;
+end if;
+
+Position = Launch_GetProdPosition(ProductID);
+if Position > 0 then
+	IsLoaded = true;
+end if;"
+	UserProperties	""
+}

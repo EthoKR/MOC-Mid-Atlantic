@@ -1,0 +1,84 @@
+Procedure	"ETI_Comm_Plan_Set_Update_Sale_Cost_Amounts_After"
+{
+	Core	"System"
+	Documentation	""
+	Script	"in				string		DBPath;
+in				boolean		I_Create_Commission_Amount;
+in				integer		CommissionableAmountSign;
+in				boolean		I_Reduce_For_Splits;
+in				integer		MatrixType;
+in				integer		PayWhen;
+in				currency	OldSellingQty;
+in				currency	QtyInBase;
+inout anonymous	table		ASI_SOP_HDR_Comm_Table;
+inout anonymous	table		ASI_SOP_LINE_Comm_Table;
+inout anonymous	table		SOP_LINE_Table;
+inout anonymous	table		ETI_SOP_LINE_Comm_Disc_Taken_Table;
+in	anonymous	table		ETI_SOP_LINE_Indexes;
+in	anonymous	table		ETI_SOP_LINE_Info;
+in	anonymous	table		ETI_SOP_LINE_Integration;
+in				boolean		UseIntegrationTable;
+in				string		ContractNumber;
+
+local	string				sopNum, spID, spPlan, itemNum, itemPlan, custNum, custPlan;
+local	integer				sopType, spFrom, spSplit;
+local	long				sopLineSeq, returnCode;
+local	currency			commQty, commSaleReductionAmt, oldCommSaleAmt, newCommSaleAmt;
+
+if not I_Create_Commission_Amount then
+	abort script;
+elseif column(\"ETI_Comm_Sale_Manual_Edit\") of table ASI_SOP_LINE_Comm_Table = true then
+	abort script;
+elseif column(\"QTY\") of table ASI_SOP_LINE_Comm_Table = 0 then
+	abort script;
+elseif column(\"'ASI Commissionable Sale Amount'\") of table ASI_SOP_LINE_Comm_Table = 0 then
+	abort script;
+end if;
+
+sopNum = column(\"'SOP Number'\") of table ASI_SOP_LINE_Comm_Table;
+sopType = column(\"'SOP Type'\") of table ASI_SOP_LINE_Comm_Table;
+sopLineSeq = column(\"'Line Item Sequence'\") of table ASI_SOP_LINE_Comm_Table;
+spID = column(\"'Salesperson ID'\") of table ASI_SOP_LINE_Comm_Table;
+spFrom = column(\"ETI_Salesperson_From\") of table ASI_SOP_LINE_Comm_Table;
+spSplit = column(\"ASI_Split_Commission_Rate\") of table ASI_SOP_LINE_Comm_Table;
+spPlan = column(\"'ASI Salesperson Commission ID'\") of table ASI_SOP_LINE_Comm_Table;
+itemNum = column(\"'Item Number'\") of table ASI_SOP_LINE_Comm_Table;
+itemPlan = column(\"'ASI Item Commission ID'\") of table ASI_SOP_LINE_Comm_Table;
+commQty = column(\"QTY\") of table ASI_SOP_LINE_Comm_Table;
+oldCommSaleAmt = column(\"'ASI Commissionable Sale Amount'\") of table ASI_SOP_LINE_Comm_Table;
+
+custNum = column(\"'Customer Number'\") of table ASI_SOP_HDR_Comm_Table;
+custPlan = column(\"'ASI Customer Commission ID'\") of table ASI_SOP_HDR_Comm_Table;
+
+call ETI_NAC_CP_ReduceCommSale,
+		returnCode,
+		sopNum,
+		sopType,
+		sopLineSeq,
+		spID,
+		spFrom,
+		spSplit,
+		spPlan,
+		itemNum,
+		itemPlan,
+		custNum,
+		custPlan,
+		commSaleReductionAmt;
+
+if commSaleReductionAmt <> 0 then
+	newCommSaleAmt = round(oldCommSaleAmt - commSaleReductionAmt, DECIMALRIGHT, currencydecimals());
+	
+	column(\"ETI_CP_CommSaleFrom\") of table ASI_SOP_LINE_Comm_Table = 6;
+	column(\"'ASI Commissionable Sale Amount'\") of table ASI_SOP_LINE_Comm_Table = newCommSaleAmt;
+	
+	if newCommSaleAmt <> 0 then
+		column(\"ETI_CP_CommSaleUnitAmt\") of table ASI_SOP_LINE_Comm_Table = round(newCommSaleAmt/commQty, DECIMALRIGHT, currencydecimals());
+	end if;
+end if;"
+	ServiceAction	""
+	ServiceCustomAciton	""
+	ServiceEnabled	"FALSE"
+	ServiceRawRequest	"FALSE"
+	ServiceUriTemplate	""
+	UserProperties	""
+}
